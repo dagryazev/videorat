@@ -47,6 +47,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+              '/' => 'clip/',
               'view/<id:.*>' => 'clip/',
               'coub-api/play-video/<id:.*>' => 'coub-api/play-video/',
               'coub/<id:.*>' => 'clip/default/get-video-coub'

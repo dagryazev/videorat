@@ -19,22 +19,14 @@ class DefaultController extends \app\controllers\ApiController
     public function actionIndex()
     {
         Yii::$app->view->title = 'VideoRat.cc';
-        $id = Yii::$app->request->get()['id'];
-        $clip = new CoubApiController(false, false);
-        $clipframe = $clip->actionPlayVideo($id);
-        $clip = json_decode($clip->actionGetVideo($id), true);
-        require './../vendor/electrolinux/phpquery/phpQuery/phpQuery.php';
-        $data['html'] = \phpQuery::newDocument($clipframe);
-        $data['clip'] = $clipframe;
-        if(isset($clip['data']['error'])){
-          $data['error'] = $clip['data']['error'];
+        $data['id'] = Yii::$app->request->get('id');
+        $view = Yii::$app->request->get('view');
+        if(isset($view)){
+          $data['view'] = true;
         } else {
-          $data['title'] = $clip['data']['title'];
-          $data['video'] = $clip['data']['file_versions']['html5']['video']['high']['url'] ?? $clip['data']['file_versions']['html5']['video']['med']['url'];
-          $data['audio'] = $clip['data']['file_versions']['html5']['audio']['high']['url'] ?? $clip['data']['file_versions']['html5']['audio']['med']['url'];
+          $data['view'] = false;
         }
-
-        return $this->render('index', $data);
+        return $this->render('index',$data);
     }
 
     public function actionGetVideoCoub(){
@@ -45,7 +37,7 @@ class DefaultController extends \app\controllers\ApiController
       $clip = new CoubApiController(false, false);
       $clipframe = $clip->actionPlayVideo($id);
       $data['html'] = \phpQuery::newDocument($clipframe);
-      echo $this->setResponse(['template' => $data['html']->find('body')->html(), 'info' => []])->parseJson(true);
+      echo $this->setResponse(['template' => $data['html']->find('body')->html(), 'info' => ['link' => 'http://' . $_SERVER['HTTP_HOST'] . '/view/' . $id . '/?view' ]])->parseJson(true);
       die;
     }
 
